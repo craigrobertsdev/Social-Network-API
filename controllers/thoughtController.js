@@ -1,11 +1,11 @@
 const { Thought, User } = require("../models");
 
 module.exports = {
-  // Get all courses
+  // Get all thoughts
   async getThoughts(req, res) {
     try {
-      const courses = await Course.find();
-      res.json(courses);
+      const thought = await Thought.find().select("-__v").populate("reactions");
+      res.json(thought);
     } catch (err) {
       res.status(500).json(err);
     }
@@ -28,17 +28,16 @@ module.exports = {
   async createThought(req, res) {
     try {
       const thought = await Thought.create(req.body);
-
+      console.log(thought._id.id);
       const userToUpdate = await User.findOneAndUpdate(
         { username: req.body.username },
-        { $push: { thoughts: thought._id } }
+        { $addToSet: { thoughts: thought._id } }
       );
 
       // userToUpdate.thoughts.push(thought._id);
 
       // await userToUpdate.save();
-      debugger;
-      res.status(200).send({ thought, userToUpdate });
+      res.status(200).json({ thought, userToUpdate });
     } catch (err) {
       console.log(err);
       return res.status(500).json(err.message);
