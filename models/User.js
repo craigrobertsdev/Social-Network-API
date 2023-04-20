@@ -19,11 +19,6 @@ const userSchema = new Schema(
         "Please enter a valid email address",
       ],
     },
-    github: {
-      type: String,
-      required: true,
-      max_length: 50,
-    },
     thoughts: [
       {
         type: Schema.Types.ObjectId,
@@ -44,8 +39,10 @@ const userSchema = new Schema(
   }
 );
 
-userSchema.virtual("friendCount").get(() => friends.length);
+userSchema.virtual("friendCount").get(function () {
+  return this.friends.length;
+});
 
-const Student = model("user", studentSchema);
+const User = model("user", userSchema);
 
-module.exports = Student;
+module.exports = User;

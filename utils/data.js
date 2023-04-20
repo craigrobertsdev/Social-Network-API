@@ -101,22 +101,14 @@ const getRandomArrItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const getRandomName = () => `${getRandomArrItem(names)} ${getRandomArrItem(names)}`;
 
 // Gets n random thoughts
-const getRandomThoughts = (n) => {
-  const randomThoughts = [];
-  for (let i = 0; i < n; i++) {
-    randomThoughts.push(getRandomArrItem(thoughts));
-  }
-
-  return randomThoughts;
+const getRandomThought = () => {
+  return getRandomArrItem(thoughts);
 };
 
 // Gets n random reactions
-const getRandomReactions = (n) => {
-  const randomReactions = [];
-  for (let i = 0; i < n; i++) {
-    randomReactions.push(getRandomArrItem(reactions));
-  }
+const getRandomReaction = () => {
+  return getRandomArrItem(reactions);
 };
 
 // Export the functions for use in seed.js
-module.exports = { getRandomName, getRandomThoughts, getRandomReactions };
+module.exports = { getRandomName, getRandomThought, getRandomReaction };

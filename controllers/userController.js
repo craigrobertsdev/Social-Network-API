@@ -27,11 +27,11 @@ module.exports = {
   // Get all students
   async getUsers(req, res) {
     try {
-      const students = await Student.find();
+      const users = await User.find();
 
-      res.json(students);
+      res.status(200).json(users);
     } catch (err) {
-      return res.status(500).json(err);
+      return res.status(500).json(err.message);
     }
   },
   // Get a single student
@@ -39,7 +39,7 @@ module.exports = {
     try {
       const user = await User.findOne({ _id: req.params.userId })
         .select("-__v")
-        .populate(["thoughts", "friends"]);
+        .populate("thoughts", "friends");
 
       if (!user) {
         return res.status(404).json({ message: "No user with that ID" });
@@ -49,7 +49,8 @@ module.exports = {
         user,
       });
     } catch (err) {
-      return res.status(500).json(err);
+      console.error(err);
+      return res.status(500).json(err.message);
     }
   },
   // create a new student
@@ -58,8 +59,13 @@ module.exports = {
       const user = await User.create(req.body);
       res.json(user);
     } catch (err) {
-      res.status(500).json(err);
+      res.status(500).json(err.message);
     }
+  },
+  async updateUser(req, res) {
+    // try {
+    //   const user = User.findById(req.body.)
+    // }
   },
   // Delete a student and remove them from the course
   async deleteUser(req, res) {

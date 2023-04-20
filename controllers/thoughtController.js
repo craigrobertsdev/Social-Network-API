@@ -1,8 +1,8 @@
-const { Course, Student } = require('../models');
+const { Thought, User } = require("../models");
 
 module.exports = {
   // Get all courses
-  async getCourses(req, res) {
+  async getThoughts(req, res) {
     try {
       const courses = await Course.find();
       res.json(courses);
@@ -13,11 +13,10 @@ module.exports = {
   // Get a course
   async getSingleCourse(req, res) {
     try {
-      const course = await Course.findOne({ _id: req.params.courseId })
-        .select('-__v');
+      const course = await Course.findOne({ _id: req.params.courseId }).select("-__v");
 
       if (!course) {
-        return res.status(404).json({ message: 'No course with that ID' });
+        return res.status(404).json({ message: "No course with that ID" });
       }
 
       res.json(course);
@@ -25,14 +24,24 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  // Create a course
-  async createCourse(req, res) {
+  // Create a thought
+  async createThought(req, res) {
     try {
-      const course = await Course.create(req.body);
-      res.json(course);
+      const thought = await Thought.create(req.body);
+
+      const userToUpdate = await User.findOneAndUpdate(
+        { username: req.body.username },
+        { $push: { thoughts: thought._id } }
+      );
+
+      // userToUpdate.thoughts.push(thought._id);
+
+      // await userToUpdate.save();
+      debugger;
+      res.status(200).send({ thought, userToUpdate });
     } catch (err) {
       console.log(err);
-      return res.status(500).json(err);
+      return res.status(500).json(err.message);
     }
   },
   // Delete a course
@@ -41,11 +50,11 @@ module.exports = {
       const course = await Course.findOneAndDelete({ _id: req.params.courseId });
 
       if (!course) {
-        res.status(404).json({ message: 'No course with that ID' });
+        res.status(404).json({ message: "No course with that ID" });
       }
 
       await Student.deleteMany({ _id: { $in: course.students } });
-      res.json({ message: 'Course and students deleted!' });
+      res.json({ message: "Course and students deleted!" });
     } catch (err) {
       res.status(500).json(err);
     }
@@ -60,7 +69,7 @@ module.exports = {
       );
 
       if (!course) {
-        res.status(404).json({ message: 'No course with this id!' });
+        res.status(404).json({ message: "No course with this id!" });
       }
 
       res.json(course);
