@@ -2,14 +2,14 @@ const { ObjectId } = require("mongoose").Types;
 const { User, Thought } = require("../models");
 
 module.exports = {
-  // Get all user
+  // Get all users
   async getUsers(req, res) {
     try {
       const users = await User.find();
 
       res.status(200).json(users);
     } catch (err) {
-      return res.status(500).json(err.message);
+      return res.status(500).json(err);
     }
   },
 
@@ -24,25 +24,23 @@ module.exports = {
         return res.status(404).json({ message: "No user with that ID" });
       }
 
-      res.json({
-        user,
-      });
+      res.json(user);
     } catch (err) {
-      console.error(err);
-      return res.status(500).json(err.message);
+      return res.status(500).json(err);
     }
   },
 
-  // create a new user
+  // Create a new user
   async createUser(req, res) {
     try {
       const user = await User.create(req.body);
       res.json(user);
     } catch (err) {
-      res.status(500).json(err.message);
+      res.status(500).json(err);
     }
   },
 
+  // Update user
   async updateUser(req, res) {
     try {
       const user = await User.findOneAndUpdate({ _id: req.params.userId }, req.body, { new: true });
@@ -53,7 +51,7 @@ module.exports = {
 
       res.status(200).json(user);
     } catch (err) {
-      res.status(500).json(err.message);
+      res.status(500).json(err);
     }
   },
 
@@ -80,34 +78,43 @@ module.exports = {
     }
   },
 
+  // Add friend to user's friends array
   async addFriend(req, res) {
-    const user = await User.findOneAndUpdate(
-      req.params.userId,
-      {
-        $addToSet: { friends: new ObjectId(req.params.friendId) },
-      },
-      { new: true }
-    );
+    try {
+      const user = await User.findOneAndUpdate(
+        req.params.userId,
+        {
+          $addToSet: { friends: new ObjectId(req.params.friendId) },
+        },
+        { new: true }
+      );
 
-    if (!user) {
-      return res.status(404).json({ message: "No such user exists" });
+      if (!user) {
+        return res.status(404).json({ message: "No such user exists" });
+      }
+
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json(err);
     }
-
-    res.status(200).json(user);
   },
   async deleteFriend(req, res) {
-    const user = await User.findOneAndUpdate(
-      req.params.userId,
-      {
-        $pull: { friends: new ObjectId(req.params.friendId) },
-      },
-      { new: true }
-    );
+    try {
+      const user = await User.findOneAndUpdate(
+        req.params.userId,
+        {
+          $pull: { friends: new ObjectId(req.params.friendId) },
+        },
+        { new: true }
+      );
 
-    if (!user) {
-      return res.status(404).json({ message: "No such user exists" });
+      if (!user) {
+        return res.status(404).json({ message: "No such user exists" });
+      }
+
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json(err);
     }
-
-    res.status(200).json(user);
   },
 };
