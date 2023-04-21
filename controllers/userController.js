@@ -18,7 +18,7 @@ module.exports = {
     try {
       const user = await User.findOne({ _id: req.params.userId })
         .select("-__v")
-        .populate("thoughts", "friends");
+        .populate(["thoughts", "friends"]);
 
       if (!user) {
         return res.status(404).json({ message: "No user with that ID" });
@@ -26,7 +26,7 @@ module.exports = {
 
       res.json(user);
     } catch (err) {
-      return res.status(500).json(err);
+      return res.status(500).json(err.message);
     }
   },
 
@@ -67,12 +67,10 @@ module.exports = {
       const thought = await Thought.deleteMany({ _id: { $in: user.thoughts } });
 
       if (!thought) {
-        return res.status(404).json({
-          message: "User deleted, but no thoughts found",
-        });
+        return res.status(404).json({ message: "User deleted, but no thoughts found" });
       }
 
-      res.json({ message: "User successfully deleted" });
+      res.json({ message: "User successfully deleted", user });
     } catch (err) {
       res.status(500).json(err);
     }
@@ -98,6 +96,8 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+
+  // Delete friend from user's friends array
   async deleteFriend(req, res) {
     try {
       const user = await User.findOneAndUpdate(
@@ -112,7 +112,7 @@ module.exports = {
         return res.status(404).json({ message: "No such user exists" });
       }
 
-      res.status(200).json(user);
+      res.status(200).json({ message: "friend deleted successfully", user });
     } catch (err) {
       res.status(500).json(err);
     }
