@@ -98,7 +98,7 @@ const reactions = [
 const getRandomArrItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
 // Gets a random full name
-const getRandomName = () => `${getRandomArrItem(names)} ${getRandomArrItem(names)}`;
+const getRandomName = () => `${getRandomArrItem(names)}${getRandomArrItem(names)}`;
 
 // Gets n random thoughts
 const getRandomThought = () => {

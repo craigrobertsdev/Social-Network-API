@@ -57,7 +57,7 @@ connection.once("open", async () => {
     for (let i = 0; i < 3; i++) {
       thought.reactions.push({
         reactionBody: getRandomReaction(),
-        username: thought.username,
+        username: getRandomName(),
       });
     }
     thoughtsToSave.push(thought.save());
